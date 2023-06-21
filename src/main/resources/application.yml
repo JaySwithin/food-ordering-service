@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/food-delivery-db
