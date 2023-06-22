@@ -1,5 +1,6 @@
 package com.swithin.fooddeliveryservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,26 +8,23 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MenuItem {
+@Entity
+public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long itemId;
 
     @Column(nullable = false)
-    private String itemName;
-
-    @Column(nullable = false)
-    private Double itemPrice;
-
-    private String itemDescription;
+    private int quantity;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
+    @JsonIgnore
+    @JoinColumn(name = "order_id")
+    private Order order;
 }

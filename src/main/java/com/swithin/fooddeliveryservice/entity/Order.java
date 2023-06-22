@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -33,4 +34,13 @@ public class Order {
 
     @Column(nullable = false)
     private String deliveryAddress;
+
+    @Column(nullable = false)
+    private String status;
+
+    @Column(nullable = false)
+    private Double totalAmount;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems;
 }
