@@ -1,6 +1,7 @@
 package com.swithin.fooddeliveryservice.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,10 +24,10 @@ public class MenuItem {
     @Column(nullable = false)
     private Double itemPrice;
 
+    private String itemDescription;
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
-
-    private String itemDescription;
 
 }
