@@ -3,6 +3,9 @@ package com.swithin.fooddeliveryservice.service;
 import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.OrderDTO;
 import com.swithin.fooddeliveryservice.entity.*;
+import com.swithin.fooddeliveryservice.errors.OrderNotFoundException;
+import com.swithin.fooddeliveryservice.errors.RestaurantNotFoundException;
+import com.swithin.fooddeliveryservice.errors.UserNotFoundException;
 import com.swithin.fooddeliveryservice.payload.OrderItemPayload;
 import com.swithin.fooddeliveryservice.payload.OrderPayload;
 import com.swithin.fooddeliveryservice.repository.*;
@@ -26,9 +29,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO createOrder(OrderPayload payload) {
         Restaurant restaurant = restaurantRepository.findById(payload.getRestaurantId())
-                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found with ID: " + payload.getRestaurantId()));
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with ID: " + payload.getRestaurantId()));
         User user = userRepository.findById(payload.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + payload.getUserId()));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + payload.getUserId()));
         Order order = new Order();
         order.setRestaurant(restaurant);
         order.setUser(user);
@@ -60,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrder(savedOrder);
-            orderItemRepository.save(orderItem); // Save each OrderItem
+            orderItemRepository.save(orderItem);
         }
 
         var res = mapper.orderToDTO(savedOrder);
@@ -75,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO fulfillOrder(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException(String.format("Order not found with ID: {id=%d}", id)));
         order.setStatus("Fulfilled");
         var res = orderRepository.save(order);
         return mapper.orderToDTO(res);

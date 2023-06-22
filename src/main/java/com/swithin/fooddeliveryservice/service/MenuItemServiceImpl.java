@@ -4,6 +4,8 @@ import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.MenuItemDTO;
 import com.swithin.fooddeliveryservice.entity.MenuItem;
 import com.swithin.fooddeliveryservice.entity.Restaurant;
+import com.swithin.fooddeliveryservice.errors.MenuItemNotFoundException;
+import com.swithin.fooddeliveryservice.errors.RestaurantNotFoundException;
 import com.swithin.fooddeliveryservice.payload.MenuItemPayload;
 import com.swithin.fooddeliveryservice.repository.MenuItemRepository;
 import com.swithin.fooddeliveryservice.repository.RestaurantRepository;
@@ -23,7 +25,8 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     public MenuItemDTO addMenuItem(MenuItemPayload payload) {
 
-        Restaurant restaurant = restaurantRepository.findByRestaurantId(payload.getRestaurantId());
+        Restaurant restaurant = restaurantRepository.findById(payload.getRestaurantId()).orElseThrow(() ->
+                new RestaurantNotFoundException(String.format("Goal was not found with parameters {id=%d}", payload.getRestaurantId())));
 
         MenuItem menuItem = MenuItem.builder()
                 .itemName(payload.getItemName())
@@ -46,7 +49,8 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public MenuItemDTO updateItem(Long id, MenuItemPayload payload) {
-        var item = menuItemRepository.findByItemId(id);
+        MenuItem item = menuItemRepository.findById(id).orElseThrow(() ->
+                new MenuItemNotFoundException(String.format("Goal was not found with parameters {id=%d}", id)));
         mapper.updateFields(item, payload);
         var res = menuItemRepository.save(item);
         return mapper.menuItemToDTO(res);

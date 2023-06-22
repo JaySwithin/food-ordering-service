@@ -3,6 +3,7 @@ package com.swithin.fooddeliveryservice.service;
 import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.RestaurantDTO;
 import com.swithin.fooddeliveryservice.entity.Restaurant;
+import com.swithin.fooddeliveryservice.errors.RestaurantNotFoundException;
 import com.swithin.fooddeliveryservice.payload.RestaurantPayload;
 import com.swithin.fooddeliveryservice.repository.RestaurantRepository;
 import lombok.AllArgsConstructor;
@@ -40,13 +41,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantDTO getRestaurantById(Long id) {
-        var restaurant = restaurantRepository.findByRestaurantId(id);
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() ->
+                new RestaurantNotFoundException("Restaurant not found"));
         return mapper.restaurantToDto(restaurant);
     }
 
     @Override
     public RestaurantDTO updateRestaurant(Long id, RestaurantPayload payload) {
-        var restaurant = restaurantRepository.findByRestaurantId(id);
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() ->
+                new RestaurantNotFoundException("Restaurant not found"));
         mapper.updateFields(restaurant, payload);
         var res = restaurantRepository.save(restaurant);
         return mapper.restaurantToDto(res);

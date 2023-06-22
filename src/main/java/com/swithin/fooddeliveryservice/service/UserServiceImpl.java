@@ -3,6 +3,8 @@ package com.swithin.fooddeliveryservice.service;
 import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.UserDTO;
 import com.swithin.fooddeliveryservice.entity.User;
+import com.swithin.fooddeliveryservice.errors.UserAlreadyExistException;
+import com.swithin.fooddeliveryservice.errors.UserNotFoundException;
 import com.swithin.fooddeliveryservice.payload.UserPayload;
 import com.swithin.fooddeliveryservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserPayload payload) {
         Optional<User> existingUser = userRepository.findUserByEmail(payload.getEmail());
         if(existingUser.isPresent()) {
-            System.out.println("User exisits");
-            return null;
+            throw new UserAlreadyExistException("User already exists");
         }
 
         User user = User.builder()
@@ -39,7 +40,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUser(Long id, UserPayload payload) {
-        var user = userRepository.findByUserId(id);
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User does not exist"));
         mapper.updateFields(user, payload);
         var res = userRepository.save(user);
         return mapper.userToDTO(res);
@@ -47,8 +49,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        var user = userRepository.findByUserId(id);
-        System.out.println(user.getDeliveryAddress());
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User does not exist"));
         var res = mapper.userToDTO(user);
         return res;
     }
