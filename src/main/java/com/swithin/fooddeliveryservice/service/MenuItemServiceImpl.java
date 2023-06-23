@@ -4,11 +4,13 @@ import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.MenuItemDTO;
 import com.swithin.fooddeliveryservice.entity.MenuItem;
 import com.swithin.fooddeliveryservice.entity.Restaurant;
+import com.swithin.fooddeliveryservice.errors.AuthException;
 import com.swithin.fooddeliveryservice.errors.MenuItemNotFoundException;
 import com.swithin.fooddeliveryservice.errors.RestaurantNotFoundException;
 import com.swithin.fooddeliveryservice.payload.MenuItemPayload;
 import com.swithin.fooddeliveryservice.repository.MenuItemRepository;
 import com.swithin.fooddeliveryservice.repository.RestaurantRepository;
+import com.swithin.fooddeliveryservice.repository.UserSessionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +22,13 @@ import java.util.stream.Collectors;
 public class MenuItemServiceImpl implements MenuItemService {
     private final MenuItemRepository menuItemRepository;
     private final RestaurantRepository restaurantRepository;
+    private final UserSessionRepository userSessionRepository;
     private final EntityMapper mapper;
 
     @Override
-    public MenuItemDTO addMenuItem(MenuItemPayload payload) {
+    public MenuItemDTO addMenuItem(MenuItemPayload payload, String token) {
+        userSessionRepository.findByUUID(token).orElseThrow(() ->
+                new AuthException("Unauthorized. User not logged in."));
 
         Restaurant restaurant = restaurantRepository.findById(payload.getRestaurantId()).orElseThrow(() ->
                 new RestaurantNotFoundException(String.format("Goal was not found with parameters {id=%d}", payload.getRestaurantId())));
@@ -48,7 +53,9 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItemDTO updateItem(Long id, MenuItemPayload payload) {
+    public MenuItemDTO updateItem(Long id, MenuItemPayload payload, String token) {
+        userSessionRepository.findByUUID(token).orElseThrow(() ->
+                new AuthException("Unauthorized. User not logged in."));
         MenuItem item = menuItemRepository.findById(id).orElseThrow(() ->
                 new MenuItemNotFoundException(String.format("Goal was not found with parameters {id=%d}", id)));
         mapper.updateFields(item, payload);

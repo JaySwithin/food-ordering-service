@@ -3,9 +3,11 @@ package com.swithin.fooddeliveryservice.service;
 import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.RestaurantDTO;
 import com.swithin.fooddeliveryservice.entity.Restaurant;
+import com.swithin.fooddeliveryservice.errors.AuthException;
 import com.swithin.fooddeliveryservice.errors.RestaurantNotFoundException;
 import com.swithin.fooddeliveryservice.payload.RestaurantPayload;
 import com.swithin.fooddeliveryservice.repository.RestaurantRepository;
+import com.swithin.fooddeliveryservice.repository.UserSessionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +18,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
+    private final UserSessionRepository userSessionRepository;
     private final EntityMapper mapper;
     @Override
-    public RestaurantDTO addRestaurant(RestaurantPayload payload) {
+    public RestaurantDTO addRestaurant(RestaurantPayload payload, String token) {
+        userSessionRepository.findByUUID(token).orElseThrow(() ->
+                new AuthException("Unauthorized. User not logged in."));
         Restaurant restaurant = Restaurant
                 .builder()
                 .restaurantName(payload.getRestaurantName())
@@ -47,7 +52,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public RestaurantDTO updateRestaurant(Long id, RestaurantPayload payload) {
+    public RestaurantDTO updateRestaurant(Long id, RestaurantPayload payload, String token) {
+        userSessionRepository.findByUUID(token).orElseThrow(() ->
+                new AuthException("Unauthorized. User not logged in."));
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() ->
                 new RestaurantNotFoundException("Restaurant not found"));
         mapper.updateFields(restaurant, payload);

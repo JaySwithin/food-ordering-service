@@ -6,9 +6,9 @@ import com.swithin.fooddeliveryservice.payload.MenuItemPayload;
 import java.util.List;
 
 public interface MenuItemService {
-    MenuItemDTO addMenuItem(MenuItemPayload payload);
+    MenuItemDTO addMenuItem(MenuItemPayload payload, String token);
 
     List<MenuItemDTO> getMenuItems();
 
-    MenuItemDTO updateItem(Long id, MenuItemPayload payload);
+    MenuItemDTO updateItem(Long id, MenuItemPayload payload, String token);
 }

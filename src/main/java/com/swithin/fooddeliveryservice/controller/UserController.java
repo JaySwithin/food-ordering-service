@@ -19,14 +19,17 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public UserDTO getUserById(@PathVariable("id") Long id) {
-        UserDTO userDTO = userService.getUserById(id);
+    public UserDTO getUserById(@PathVariable("id") Long id,
+                               @RequestParam String token) {
+        UserDTO userDTO = userService.getUserById(id, token);
         return userDTO;
     }
 
     @PatchMapping("/users/{id}")
-    public UserDTO updateUser(@PathVariable("id") Long id, @RequestBody UserPayload payload) {
-        UserDTO userDTO = userService.updateUser(id, payload);
+    public UserDTO updateUser(@PathVariable("id") Long id,
+                              @RequestBody UserPayload payload,
+                              @RequestParam String token) {
+        UserDTO userDTO = userService.updateUser(id, payload, token);
         return userDTO;
     }
 }

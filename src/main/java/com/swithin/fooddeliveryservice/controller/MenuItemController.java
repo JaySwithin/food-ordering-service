@@ -15,8 +15,9 @@ public class MenuItemController {
     private final MenuItemService menuItemService;
 
     @PostMapping("/items")
-    public MenuItemDTO addItem(@RequestBody MenuItemPayload payload) {
-        MenuItemDTO menuItem = menuItemService.addMenuItem(payload);
+    public MenuItemDTO addItem(@RequestBody MenuItemPayload payload,
+                               @RequestParam String token) {
+        MenuItemDTO menuItem = menuItemService.addMenuItem(payload, token);
         return menuItem;
     }
 
@@ -27,8 +28,10 @@ public class MenuItemController {
     }
 
     @PatchMapping("items/{id}")
-    public MenuItemDTO updateItem(@PathVariable("id") Long id, @RequestBody MenuItemPayload payload) {
-        MenuItemDTO menuItemDTO = menuItemService.updateItem(id, payload);
+    public MenuItemDTO updateItem(@PathVariable("id") Long id,
+                                  @RequestBody MenuItemPayload payload,
+                                  @RequestParam String token) {
+        MenuItemDTO menuItemDTO = menuItemService.updateItem(id, payload, token);
         return menuItemDTO;
     }
 

@@ -13,15 +13,17 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/orders")
-    public OrderDTO createOrder(@RequestBody OrderPayload payload) {
-        OrderDTO orderDTO = orderService.createOrder(payload);
+    public OrderDTO createOrder(@RequestBody OrderPayload payload,
+                                @RequestParam String token) {
+        OrderDTO orderDTO = orderService.createOrder(payload, token);
         return orderDTO;
     }
 
 
     @PutMapping("/orders/{id}/fulfill")
-    public OrderDTO fulfillOrder(@PathVariable("id") Long id) {
-        OrderDTO orderDTO = orderService.fulfillOrder(id);
+    public OrderDTO fulfillOrder(@PathVariable("id") Long id,
+                                 @RequestParam String token) {
+        OrderDTO orderDTO = orderService.fulfillOrder(id, token);
         return orderDTO;
     }
 

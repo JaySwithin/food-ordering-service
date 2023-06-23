@@ -3,6 +3,7 @@ package com.swithin.fooddeliveryservice.service;
 import com.swithin.fooddeliveryservice.config.EntityMapper;
 import com.swithin.fooddeliveryservice.dto.OrderDTO;
 import com.swithin.fooddeliveryservice.entity.*;
+import com.swithin.fooddeliveryservice.errors.AuthException;
 import com.swithin.fooddeliveryservice.errors.OrderNotFoundException;
 import com.swithin.fooddeliveryservice.errors.RestaurantNotFoundException;
 import com.swithin.fooddeliveryservice.errors.UserNotFoundException;
@@ -10,7 +11,6 @@ import com.swithin.fooddeliveryservice.payload.OrderItemPayload;
 import com.swithin.fooddeliveryservice.payload.OrderPayload;
 import com.swithin.fooddeliveryservice.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,15 +19,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final RestaurantRepository restaurantRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
+    private final UserSessionRepository userSessionRepository;
     private final EntityMapper mapper;
     @Override
-    public OrderDTO createOrder(OrderPayload payload) {
+    public OrderDTO createOrder(OrderPayload payload, String token) {
+        userSessionRepository.findByUUID(token).orElseThrow(() ->
+                new AuthException("Unauthorized. User not logged in."));
         Restaurant restaurant = restaurantRepository.findById(payload.getRestaurantId())
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with ID: " + payload.getRestaurantId()));
         User user = userRepository.findById(payload.getUserId())
@@ -76,7 +78,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO fulfillOrder(Long id) {
+    public OrderDTO fulfillOrder(Long id, String token) {
+        userSessionRepository.findByUUID(token).orElseThrow(() ->
+                new AuthException("Unauthorized. User not logged in."));
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException(String.format("Order not found with ID: {id=%d}", id)));
         order.setStatus("Fulfilled");

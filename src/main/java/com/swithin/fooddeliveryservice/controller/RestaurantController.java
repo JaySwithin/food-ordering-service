@@ -15,8 +15,9 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
 
     @PostMapping("/restaurants")
-    public RestaurantDTO addRestaurant(@RequestBody RestaurantPayload payload) {
-        RestaurantDTO restaurantDTO = restaurantService.addRestaurant(payload);
+    public RestaurantDTO addRestaurant(@RequestBody RestaurantPayload payload,
+                                       @RequestParam String token) {
+        RestaurantDTO restaurantDTO = restaurantService.addRestaurant(payload, token);
         return restaurantDTO;
     }
 
@@ -33,8 +34,10 @@ public class RestaurantController {
     }
 
     @PatchMapping("restaurants/{id}")
-    public RestaurantDTO updateRestaurant(@PathVariable("id") Long id, @RequestBody RestaurantPayload payload) {
-        RestaurantDTO restaurantDTO = restaurantService.updateRestaurant(id, payload);
+    public RestaurantDTO updateRestaurant(@PathVariable("id") Long id,
+                                          @RequestBody RestaurantPayload payload,
+                                          @RequestParam String token) {
+        RestaurantDTO restaurantDTO = restaurantService.updateRestaurant(id, payload, token);
         return restaurantDTO;
     }
 

@@ -32,4 +32,13 @@ public class RestResponseExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponseDTO> authException(AuthException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponseDTO.builder()
+                        .success(false)
+                        .message(exception.getMessage())
+                        .build());
+    }
+
 }

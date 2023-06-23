@@ -5,6 +5,6 @@ import com.swithin.fooddeliveryservice.payload.UserPayload;
 
 public interface UserService {
     UserDTO createUser(UserPayload payload);
-    UserDTO updateUser(Long id, UserPayload payload);
-    UserDTO getUserById(Long id);
+    UserDTO updateUser(Long id, UserPayload payload, String token);
+    UserDTO getUserById(Long id, String token);
 }
