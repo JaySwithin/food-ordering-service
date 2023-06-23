@@ -46,10 +46,13 @@ To refer to the API Documentation (Created with Swagger), use this endpoint:
 `http://localhost:8080/swagger-ui/index.html`
 
 
+## API Endpoints
+Please refer to the API documentation or codebase for detailed information on request payloads and responses.
+
 ## Stack and Tools
 
 - SpringBoot (Java)
-- PostreSQl
+- PostreSQL
 - Spring Data JPA
 - MapStruct
 - Swagger (For Documentation)
