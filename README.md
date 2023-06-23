@@ -21,9 +21,13 @@ To set up and run the application, follow these steps:
 
    Open the `application.yml` file located in the src/main/resources directory. Update the following properties with your PostgreSQL database information:
    ```bash
-   spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
+   spring:
+    ...
+    ...
+    datasource:
+    username: your_username
+    password: your_password
+    url: jdbc:postgresql://localhost:5432/your_database_name
 
 3. Build the application
    ```bash
@@ -38,6 +42,7 @@ The application will start running on `http://localhost:8080`.
 ## API Documentation
 
 To refer to the API Documentation (Created with Swagger), use this endpoint:
+
 `http://localhost:8080/swagger-ui/index.html`
 
 
